@@ -1,5 +1,11 @@
 import Leap, thread, sys, time
 from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
+import serial
+
+#arduinoData = serial.Serial('COM6', baudrate=9600, timeout=1)
+
+def sortFirst(val): 
+    return int(val[0]) 
 
 class LeapMotionListener(Leap.Listener):
     finger_names = ['Thumb', 'Index', 'Middle','Ring', 'Pinky']
@@ -27,12 +33,47 @@ class LeapMotionListener(Leap.Listener):
     def on_frame(self, controller):
         frame = controller.frame()
 
-        print("\nFrame ID: " + str(frame.id) +
+        """print("\nFrame ID: " + str(frame.id) +
               "\nTimestamp: " + str(frame.timestamp) +
               "\n# of Hands: " + str(len(frame.hands)) +
               "\n# of Fingers: " + str(len(frame.fingers)) +
               "\n# of Tools: " + str(len(frame.tools)) + 
-              "\n# of Gestures: " + str(len(frame.gestures())))
+              "\n# of Gestures: " + str(len(frame.gestures())))"""
+        fingerPositions = []
+        if len(frame.hands) != 2:
+            return
+        
+        if frame.hands[0].is_left:
+            fingers = frame.hands[0].pointables
+            fingers.append(frame.hands[1].pointables)
+        else:
+            fingers = frame.hands[1].pointables
+            fingers.append(frame.hands[0].pointables)
+        # now have a list of pointables from left hand to right hand
+        
+        for finger in fingers:
+            fingerPositions.append(finger.tip_position)
+        fingerPositions.sort(key=sortFirst)
+        #print(fingerPositions[0])
+        # print all finger positions
+        print("\n")
+        print(fingerPositions[5])
+        #for finger in fingerPositions:
+           # print(finger)
+        """if hand.palm_position[0] > 0:
+            print("\nright")
+            #print("\n" + str(hand.palm_position[0]))
+            arduinoData.write(str(chr(97)))"""
+        """else:
+            print("\nleft")
+            arduinoData.write(str(chr(98)))"""
+
+        #print handType + " Hand ID: " + str(hand.id) + " Palm X Position: " + str(hand.palm_position[0])
+
+        #normal = hand.palm_normal
+        #direction = hand.direction
+
+        #print("Pitch: " + str(direction.pitch * Leap.RAD_TO_DEG) + " Roll: " + str(normal.roll * Leap.RAD_TO_DEG) + " Yaw: " + str(direction.yaw * Leap.RAD_TO_DEG))
 
 def main():
     # object of class we define
@@ -45,6 +86,9 @@ def main():
     # the names on_*** and calls them accordingly
     controller.add_listener(listener)
 
+    
+        
+
     print("Press Enter to Quit")
     try:
         sys.stdin.readline()
@@ -52,6 +96,12 @@ def main():
         pass
     finally:
         controller.remove_listener(listener)
+
+    
+    
+
+
+    #arduinoData.write
 
 if __name__ == "__main__":
     main()
