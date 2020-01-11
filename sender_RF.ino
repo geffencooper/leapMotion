@@ -5,17 +5,17 @@
 
 RF24 radio(7, 8); //CNS, CE
 
-const byte address[6] = "00001";
+const byte rxAddr[6] = "00001";
 
 void setup() {
   radio.begin();
-  radio.openWritingPipe(address);
-  radio.setPALevel(RF24_PA_MIN);
+  radio.setRetries(15, 15);
+  radio.openWritingPipe(rxAddr);
   radio.stopListening();
 }
 
 void loop() {
   const char text[] = "Hello World";
   radio.write(&text, sizeof(text));
-  dalay(1000);
+  delay(1000);
 }
