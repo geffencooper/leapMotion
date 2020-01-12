@@ -13,16 +13,19 @@ void setup()
   radio.openReadingPipe(0, address); 
   radio.setPALevel(RF24_PA_MIN);
   radio.startListening();
+  pinMode(4, OUTPUT);
 }
 
 
 void loop()  
 {
+  /*tone(4, */
   if (radio.available()) 
   {
     long text;
     radio.read(&text, sizeof(text));
     Serial.println(text);
+    tone(4, text);
   }
 
 }
