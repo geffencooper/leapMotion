@@ -17,7 +17,7 @@ class LeapMotionListener(Leap.Listener):
     newFingerHeights = [1,1,1,1,1,1,1,1,1,1]
     fingerHeightsDelta = []
     count = 0
-    threshold = 18
+    threshold = 21
 
     def on_init(self, controller):
         print("Initialized")
