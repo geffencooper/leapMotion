@@ -40,6 +40,8 @@ class LeapMotionListener(Leap.Listener):
               "\n# of Tools: " + str(len(frame.tools)) + 
               "\n# of Gestures: " + str(len(frame.gestures())))"""
         fingerPositions = []
+        fingerHeights = []
+        fingerHeightsDelta = []
         if len(frame.hands) != 2:
             return
         
@@ -57,9 +59,13 @@ class LeapMotionListener(Leap.Listener):
         #print(fingerPositions[0])
         # print all finger positions
         print("\n")
-        print(fingerPositions[5])
-        #for finger in fingerPositions:
-           # print(finger)
+        #print(fingerPositions[5])
+        for finger in fingerPositions:
+            fingerHeights.append(finger[1])
+            print(finger[1])
+        #for fHeight in fingerHeights:
+            #fingerHeightsDelta.append()
+        
         """if hand.palm_position[0] > 0:
             print("\nright")
             #print("\n" + str(hand.palm_position[0]))
