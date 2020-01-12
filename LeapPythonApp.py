@@ -12,6 +12,12 @@ class LeapMotionListener(Leap.Listener):
     bone_names = ['Metacarpel', 'Proximal', 'Intermediate', 'Distal']
     state_names = ['STATE_INVALID', 'STATE_START', 'STATE_UPDATE', 'STATE_END']
 
+    oldFingerHeights = [0,0,0,0,0,0,0,0,0,0]
+    newFingerHeights = [0,0,0,0,0,0,0,0,0,0]
+    fingerHeightsDelta = []
+    count = 0
+    threshold = 25
+
     def on_init(self, controller):
         print("Initialized")
 
@@ -31,6 +37,12 @@ class LeapMotionListener(Leap.Listener):
 
     # this is the meat of the code, this gets called every frame
     def on_frame(self, controller):
+        if self.count is 0:
+            #print(len(self.newFingerHeights))
+            self.oldFingerHeights = self.newFingerHeights
+        self.count +=1
+        #print(self.count)
+        self.newFingerHeights = []
         frame = controller.frame()
 
         """print("\nFrame ID: " + str(frame.id) +
@@ -40,9 +52,8 @@ class LeapMotionListener(Leap.Listener):
               "\n# of Tools: " + str(len(frame.tools)) + 
               "\n# of Gestures: " + str(len(frame.gestures())))"""
         fingerPositions = []
-        fingerHeights = []
-        fingerHeightsDelta = []
         if len(frame.hands) != 2:
+            self.count = 0
             return
         
         if frame.hands[0].is_left:
@@ -58,13 +69,28 @@ class LeapMotionListener(Leap.Listener):
         fingerPositions.sort(key=sortFirst)
         #print(fingerPositions[0])
         # print all finger positions
-        print("\n")
+        
         #print(fingerPositions[5])
-        for finger in fingerPositions:
-            fingerHeights.append(finger[1])
-            print(finger[1])
-        #for fHeight in fingerHeights:
-            #fingerHeightsDelta.append()
+        
+            #print(finger[1])
+        
+        # every 50 frames we subtract the last frame's height from this frame's height
+        if self.count is 20:
+            self.fingerHeightsDelta = []
+            self.count = 0
+            for finger in fingerPositions:
+                self.newFingerHeights.append(finger[1])
+            for i in range(len(self.newFingerHeights) - 1):
+                #print(len(self.oldFingerHeights))
+               # print(len(self.newFingerHeights))
+                #print("\n" + str(self.oldFingerHeights[i]) + " - " + str(self.newFingerHeights[i]) )
+                self.fingerHeightsDelta.append(self.oldFingerHeights[i] - self.newFingerHeights[i])
+        
+        if len(self.fingerHeightsDelta) > 0:
+            if max(self.fingerHeightsDelta) > self.threshold:
+                print( self.fingerHeightsDelta.index(max(self.fingerHeightsDelta)) )
+            else:
+                print("------------NOTHING---------------")
         
         """if hand.palm_position[0] > 0:
             print("\nright")
