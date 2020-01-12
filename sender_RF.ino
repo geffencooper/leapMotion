@@ -1,4 +1,3 @@
-
 #include  <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
@@ -16,8 +15,10 @@ const int F = 370;
 const int g = 392;
 const int G = 415;
 const int a = 440;
+const int n = 100;
 
 void setup() {
+  Serial.begin(9600);
   radio.begin();
   radio.setRetries(15, 15);
   radio.openWritingPipe(rxAddr);
@@ -67,6 +68,11 @@ void loop() {
     }
     case 'a':{
       radio.write(&a,sizeof(a));
+      break;
+    }
+    case 'n':{
+      radio.write(&n,sizeof(n));
+      //Serial.println("received n");
       break;
     }
   }
