@@ -12,8 +12,8 @@ class LeapMotionListener(Leap.Listener):
     bone_names = ['Metacarpel', 'Proximal', 'Intermediate', 'Distal']
     state_names = ['STATE_INVALID', 'STATE_START', 'STATE_UPDATE', 'STATE_END']
 
-    oldFingerHeights = [0,0,0,0,0,0,0,0,0,0]
-    newFingerHeights = [0,0,0,0,0,0,0,0,0,0]
+    oldFingerHeights = [1,1,1,1,1,1,1,1,1,1]
+    newFingerHeights = [1,1,1,1,1,1,1,1,1,1]
     fingerHeightsDelta = []
     count = 0
     threshold = 25
@@ -42,6 +42,7 @@ class LeapMotionListener(Leap.Listener):
             self.oldFingerHeights = self.newFingerHeights
         self.count +=1
         #print(self.count)
+        # need to reinitialize this
         self.newFingerHeights = []
         frame = controller.frame()
 
@@ -74,15 +75,14 @@ class LeapMotionListener(Leap.Listener):
         
             #print(finger[1])
         
-        # every 50 frames we subtract the last frame's height from this frame's height
-        if self.count is 20:
+        # every 20 frames we subtract the last frame's height from this frame's height
+        if self.count is 30:
             self.fingerHeightsDelta = []
             self.count = 0
+            # getting all the new finger heights
             for finger in fingerPositions:
                 self.newFingerHeights.append(finger[1])
-            for i in range(len(self.newFingerHeights) - 1):
-                #print(len(self.oldFingerHeights))
-               # print(len(self.newFingerHeights))
+            for i in range(len(self.newFingerHeights)):
                 #print("\n" + str(self.oldFingerHeights[i]) + " - " + str(self.newFingerHeights[i]) )
                 self.fingerHeightsDelta.append(self.oldFingerHeights[i] - self.newFingerHeights[i])
         
