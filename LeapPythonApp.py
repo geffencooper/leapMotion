@@ -2,7 +2,7 @@ import Leap, thread, sys, time
 from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 import serial
 
-#arduinoData = serial.Serial('COM6', baudrate=9600, timeout=1)
+arduinoData = serial.Serial('COM6', baudrate=9600, timeout=1)
 
 def sortFirst(val): 
     return int(val[0]) 
@@ -11,12 +11,13 @@ class LeapMotionListener(Leap.Listener):
     finger_names = ['Thumb', 'Index', 'Middle','Ring', 'Pinky']
     bone_names = ['Metacarpel', 'Proximal', 'Intermediate', 'Distal']
     state_names = ['STATE_INVALID', 'STATE_START', 'STATE_UPDATE', 'STATE_END']
+    notes = ['c', 'C', 'd', 'D', 'e', 'f', 'F', 'g', 'G', 'a']
 
     oldFingerHeights = [1,1,1,1,1,1,1,1,1,1]
     newFingerHeights = [1,1,1,1,1,1,1,1,1,1]
     fingerHeightsDelta = []
     count = 0
-    threshold = 25
+    threshold = 18
 
     def on_init(self, controller):
         print("Initialized")
@@ -37,13 +38,11 @@ class LeapMotionListener(Leap.Listener):
 
     # this is the meat of the code, this gets called every frame
     def on_frame(self, controller):
+        # start of a new set, set the old height to the last height we had
         if self.count is 0:
-            #print(len(self.newFingerHeights))
             self.oldFingerHeights = self.newFingerHeights
         self.count +=1
-        #print(self.count)
-        # need to reinitialize this
-        self.newFingerHeights = []
+
         frame = controller.frame()
 
         """print("\nFrame ID: " + str(frame.id) +
@@ -68,29 +67,26 @@ class LeapMotionListener(Leap.Listener):
         for finger in fingers:
             fingerPositions.append(finger.tip_position)
         fingerPositions.sort(key=sortFirst)
-        #print(fingerPositions[0])
-        # print all finger positions
         
-        #print(fingerPositions[5])
-        
-            #print(finger[1])
-        
-        # every 20 frames we subtract the last frame's height from this frame's height
-        if self.count is 30:
+        # every 15 frames we subtract the last frame's height from this frame's height
+        if self.count is 15:
+            self.newFingerHeights = []
             self.fingerHeightsDelta = []
             self.count = 0
             # getting all the new finger heights
             for finger in fingerPositions:
                 self.newFingerHeights.append(finger[1])
             for i in range(len(self.newFingerHeights)):
-                #print("\n" + str(self.oldFingerHeights[i]) + " - " + str(self.newFingerHeights[i]) )
                 self.fingerHeightsDelta.append(self.oldFingerHeights[i] - self.newFingerHeights[i])
         
         if len(self.fingerHeightsDelta) > 0:
             if max(self.fingerHeightsDelta) > self.threshold:
-                print( self.fingerHeightsDelta.index(max(self.fingerHeightsDelta)) )
+                #print( self.fingerHeightsDelta.index(max(self.fingerHeightsDelta)) )
+                fingerPressed = self.notes[self.fingerHeightsDelta.index(max(self.fingerHeightsDelta))]
+                arduinoData.write(fingerPressed)
             else:
-                print("------------NOTHING---------------")
+                fingerPressed = 'n'
+                arduinoData.write(fingerPressed)
         
         """if hand.palm_position[0] > 0:
             print("\nright")
