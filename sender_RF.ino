@@ -6,18 +6,17 @@
 RF24 radio(7, 8); //CNS, CE
 
 const byte rxAddr[6] = "00001";
-const int C = 261;
-const int Cs = 277;
-const int D = 294;
-const int Ds = 311;
-const int E = 330;
-const int F = 349;
-const int Fs = 370;
-const int G = 392;
-const int Gs = 415;
-const int A = 440;
-const int As = 466;
-const int B = 494;
+const int c = 261;
+const int C = 277;
+const int d = 294;
+const int D = 311;
+const int e = 330;
+const int f = 349;
+const int F = 370;
+const int g = 392;
+const int G = 415;
+const int a = 440;
+
 void setup() {
   radio.begin();
   radio.setRetries(15, 15);
@@ -26,28 +25,50 @@ void setup() {
 }
 
 void loop() {
-  radio.write(&C, sizeof(C));
-  delay(1000);
-  radio.write(&Cs, sizeof(Cs));
-  delay(1000);
-  radio.write(&D, sizeof(D));
-  delay(1000);
-  radio.write(&Ds, sizeof(Ds));
-  delay(1000);
-  radio.write(&E, sizeof(E));
-  delay(1000);
-  radio.write(&F, sizeof(F));
-  delay(1000);
-  radio.write(&Fs, sizeof(Fs));
-  delay(1000);
-  radio.write(&G, sizeof(G));
-  delay(1000);
-  radio.write(&Gs, sizeof(Gs));
-  delay(1000);
-  radio.write(&A, sizeof(A));
-  delay(1000);
-  radio.write(&As, sizeof(As));
-  delay(1000);
-  radio.write(&B, sizeof(B));
-  delay(1000);
+ char inByte = ' ';
+ if (Serial.available()){
+  char inByte = Serial.read();
+  switch (inByte){
+    case 'c':{
+      radio.write(&c,sizeof(c));
+      break;
+    }
+    case 'C':{
+      radio.write(&C,sizeof(C));
+      break;
+    }
+    case 'd':{
+      radio.write(&d,sizeof(d));
+      break;
+    }
+    case 'D':{
+      radio.write(&D,sizeof(D));
+      break;
+    }
+    case 'e':{
+      radio.write(&e,sizeof(e));
+      break;
+    }
+    case 'f':{
+      radio.write(&f,sizeof(f));
+      break;
+    }
+    case 'F':{
+      radio.write(&F,sizeof(F));
+      break;
+    }
+    case 'g':{
+      radio.write(&g,sizeof(g));
+      break;
+    }
+    case 'G':{
+      radio.write(&G,sizeof(G));
+      break;
+    }
+    case 'a':{
+      radio.write(&a,sizeof(a));
+      break;
+    }
+  }
+}
 }
