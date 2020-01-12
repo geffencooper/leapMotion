@@ -19,13 +19,18 @@ void setup()
 
 void loop()  
 {
-  /*tone(4, */
   if (radio.available()) 
   {
     long text;
     radio.read(&text, sizeof(text));
     Serial.println(text);
-    tone(4, text);
+    if(text!= 100){
+      tone(4, text);
+      delay(10);
+    }
+    else{
+      noTone(4);
+    }
   }
 
 }
