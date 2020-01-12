@@ -54,6 +54,9 @@ class LeapMotionListener(Leap.Listener):
         fingerPositions = []
         if len(frame.hands) != 2:
             self.count = 0
+            fingerPressed = 'n'
+            arduinoData.write(str(fingerPressed))
+            print(fingerPressed)
             return
         
         if frame.hands[0].is_left:
