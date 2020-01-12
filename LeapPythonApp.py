@@ -2,7 +2,7 @@ import Leap, thread, sys, time
 from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 import serial
 
-arduinoData = serial.Serial('COM6', baudrate=9600, timeout=1)
+arduinoData = serial.Serial('COM5', baudrate=9600, timeout=1)
 
 def sortFirst(val): 
     return int(val[0]) 
@@ -83,10 +83,12 @@ class LeapMotionListener(Leap.Listener):
             if max(self.fingerHeightsDelta) > self.threshold:
                 #print( self.fingerHeightsDelta.index(max(self.fingerHeightsDelta)) )
                 fingerPressed = self.notes[self.fingerHeightsDelta.index(max(self.fingerHeightsDelta))]
-                arduinoData.write(fingerPressed)
+                arduinoData.write(str(fingerPressed))
+                print(fingerPressed)
             else:
                 fingerPressed = 'n'
-                arduinoData.write(fingerPressed)
+                arduinoData.write(str(fingerPressed))
+                print(fingerPressed)
         
         """if hand.palm_position[0] > 0:
             print("\nright")
